@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+type UserRole = 'user' | 'admin';
 
 @Injectable()
 export class UserService {
   constructor(private readonly jwtService: JwtService) {}
 
   private users = [
-    { id: 1, username: 'test', password: 'test123' }
+    { id: 1, username: 'test', password: 'test123', role: 'user' as UserRole },
+    { id: 2, username: 'admin', password: 'admin123', role: 'admin' as UserRole }
   ];
 
   async validateUser(username: string, password: string) {
@@ -21,17 +23,29 @@ export class UserService {
   async login(user: any) {
     const validatedUser = await this.validateUser(user.username, user.password);
     if (validatedUser) {
-      const payload = { sub: validatedUser.id, username: validatedUser.username };
+      const payload = { 
+        sub: validatedUser.id, 
+        username: validatedUser.username,
+        role: validatedUser.role 
+      };
       return {
         access_token: this.jwtService.sign(payload),
+        role: validatedUser.role
       };
     }
     return null;
   }
 
   async findOne(id: number) {
-    // 这里可以添加查询用户的逻辑
-    return { id, username: 'test', password: 'test' };
+    const user = this.users.find(u => u.id === id);
+    if (user) {
+      return {
+        id: user.id,
+        username: user.username,
+        role: user.role
+      };
+    }
+    return null;
   }
 
 

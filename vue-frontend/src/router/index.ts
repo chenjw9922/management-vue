@@ -3,20 +3,24 @@ import { useUserStore } from '../store/user';
 import LoginPage from '../pages/login/LoginPage.vue';
 import HomePage from '../pages/home/HomePage.vue';
 
+const adminRoutes = [
+  { path: 'page1', component: () => import('../pages/otherpage/Page1.vue') },
+  { path: 'page2', component: () => import('../pages/otherpage/Page2.vue') },
+  { path: 'page3', component: () => import('../pages/otherpage/Page3.vue') }
+];
+
 const routes = [
   { path: '/', component: LoginPage },
   { path: '/login', component: LoginPage },
   { 
     path: '/home', 
+    name: 'home',
     component: HomePage,
     children: [
-      { path: 'user-management', component: ()=>import('../pages/home/UserManagement.vue')  },
-      { path: '', component: () => import('../pages/home/NewPage.vue') },
-      { path: 'page1', component: () => import('../pages/otherpage/Page1.vue') },
-      { path: 'page2', component: () => import('../pages/otherpage/Page2.vue') },
-      { path: 'page3', component: () => import('../pages/otherpage/Page3.vue') },
-      { path: 'settings', component: () => import('../pages/home/SystemSettings.vue') },
-      { path: 'reports', component: () => import('../pages/home/ReportStatistics.vue') }
+      { path: 'user-management', name: 'user-management', component: ()=>import('../pages/home/UserManagement.vue')  },
+      { path: 'dashboard', name: 'dashboard', component: () => import('../pages/home/NewPage.vue') },
+      { path: 'archive-center', name: 'archive-center', component: () => import('../pages/home/ArchiveCenter.vue') },
+      { path: 'reports', name: 'reports', component: () => import('../pages/home/ReportStatistics.vue') }
     ]
   }
 ];
@@ -34,7 +38,18 @@ router.beforeEach((to, from, next) => {
     sessionStorage.setItem('redirect', to.fullPath);
     next('/login');
   } else {
-    next();
+    // 动态添加路由
+    if (userStore.userInfo?.role === 'admin' && !router.hasRoute('page1')) {
+      adminRoutes.forEach(route => {
+        router.addRoute('home', route);
+      });
+    }
+    // 检查权限
+    if (to.path.includes('/page') && userStore.userInfo?.role !== 'admin') {
+      next('/home');
+    } else {
+      next();
+    }
   }
 });
 

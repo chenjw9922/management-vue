@@ -6,10 +6,14 @@ export const useUserStore = defineStore('user', () => {
   const userInfo = ref<{
     username?: string;
     email?: string;
+    role?: string;
   }>({});
 
-  const setToken = (newToken: string) => {
+  const setToken = (newToken: string, role?: string) => {
     token.value = newToken;
+    if (role) {
+      userInfo.value.role = role;
+    }
   };
 
   const clearToken = () => {

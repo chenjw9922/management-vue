@@ -18,7 +18,7 @@
       <transition name="slide">
         <div v-if="!collapsed" class="sub-menu">
           <router-link to="/home/user-management">人员管理</router-link>
-          <router-link to="/home/settings">系统设置</router-link>
+          <router-link to="/home/archive-center">档案中心</router-link>
           <router-link to="/home/reports">报表统计</router-link>
         </div>
       </transition>
@@ -26,11 +26,11 @@
     
     <div class="main-menu">
       <div class="menu-item" @click="toggleCollapse3">
-        页面管理
+        后台管理
       </div>
       <transition name="slide">
         <div v-if="!collapsed3" class="sub-menu">
-          <router-link to="/home/page1">Page1</router-link>
+          <router-link to="/home/page1">业务流程</router-link>
           <router-link to="/home/page2">Page2</router-link>
           <router-link to="/home/page3">Page3</router-link>
         </div>

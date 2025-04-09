@@ -26,13 +26,13 @@ const router = useRouter();
 const userStore = useUserStore();
 
 const loginForm = ref({
-  username: 'test',
-  password: 'test123'
+  username: 'admin',
+  password: 'admin123'
 });
 
 const handleLogin = async () => {
   try {
-    const response = await fetch('http://localhost:3000/users/login', {
+    const response = await fetch('http://localhost:3001/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ const handleLogin = async () => {
     }
     
     const data = await response.json();
-    userStore.setToken(data.access_token);
+    userStore.setToken(data.token || data.access_token, data.role);
     router.push('/home');
   } catch (error) {
     console.error('登录错误:', error);
